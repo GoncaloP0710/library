@@ -2,7 +2,9 @@ package Crypto;
 
 import java.util.Random;
 
-public class Coin {
+import java.io.Serializable;
+
+public class Coin implements Serializable {
     
     private int id;
     private int owner;

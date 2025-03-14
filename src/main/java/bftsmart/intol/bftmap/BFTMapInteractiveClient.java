@@ -92,7 +92,7 @@ public class BFTMapInteractiveClient {
                 System.out.println("\tEXIT: Bye bye!\n");
                 System.exit(0);
 
-            } else if (cmd.equalsIgnoreCase("MINT") && clientId == 4) { // Make sure only the client 4 can mint coins
+            } else if (cmd.equalsIgnoreCase("MINT")) { // && clientId == 4) { // Make sure only the client 4 can mint coins
 
                 float coin_value;
                 try {
@@ -136,7 +136,7 @@ public class BFTMapInteractiveClient {
                 @SuppressWarnings("unchecked")
                 ArrayList<Coin> coins_to_transfer = (ArrayList<Coin>) (ArrayList<?>) coinMap.getValues(coins_id_to_transfer);
 
-                int coins_change = Utils.Utils.coins_change(coins_to_transfer, transfer_value);
+                float coins_change = Utils.Utils.coins_change(coins_to_transfer, transfer_value);
                 if (coins_change < 0) {
                     System.out.println("\tThe sum of the coins is lower than the transfer value!\n");
                     continue;

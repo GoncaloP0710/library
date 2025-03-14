@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.TreeMap;
 
 public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
@@ -101,6 +103,13 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     int size = replicaMap.size();
                     
                     response.setSize(size);
+                    return BFTMapMessage.toBytes(response);
+                case VALUES:
+                    Collection<V> values = replicaMap.values();
+
+                    if (values != null) {
+                        response.setValues(new ArrayList<>(values)); // Convert to a serializable form
+                    }
                     return BFTMapMessage.toBytes(response);
             }
         } catch (IOException | ClassNotFoundException ex) {

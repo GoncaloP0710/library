@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +16,8 @@ public class BFTMapMessage<K,V> implements Serializable {
     private V value;
     private HashSet<K> keySet;
     private int size;
+    
+    private Collection<V> values;
 
     public BFTMapMessage() {
     }
@@ -49,6 +52,10 @@ public class BFTMapMessage<K,V> implements Serializable {
         return value;
     }
 
+    public Collection<V> getValues() {
+        return values;
+    }
+
     @SuppressWarnings("unchecked")
     public void setKey(Object key) {
         this.key = (K)key;
@@ -57,6 +64,10 @@ public class BFTMapMessage<K,V> implements Serializable {
     @SuppressWarnings("unchecked")
     public void setValue(Object value) {
         this.value = (V)value;
+    }
+
+    public void setValues(Collection<V> values2) {
+        this.values = (Collection<V>) values2;
     }
 
     @SuppressWarnings("unchecked")

@@ -20,11 +20,11 @@ public final class Utils {
         return coins_to_transfer;
     }
 
-    public static int coins_change(ArrayList<Coin> coins, float value) {
+    public static float coins_change(ArrayList<Coin> coins, float value) {
         float sum = 0;
         for (Coin coin : coins) {
             sum += coin.getValue();
         }
-        return Float.compare(sum, value);
+        return value - sum;
     }
 }

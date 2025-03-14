@@ -6,6 +6,6 @@
 package bftsmart.intol.bftmap;
 
 public enum BFTMapRequestType {
-    PUT,GET,SIZE,REMOVE,KEYSET
+    PUT,GET,SIZE,REMOVE,KEYSET,VALUES
 }
 
