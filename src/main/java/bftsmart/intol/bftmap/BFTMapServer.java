@@ -2,7 +2,7 @@
  * BFT Map implementation (server side).
  *
  */
-package intol.bftmap;
+package bftsmart.intol.bftmap;
 
 import bftsmart.tom.MessageContext;
 import bftsmart.tom.ServiceReplica;

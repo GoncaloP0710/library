@@ -3,7 +3,7 @@
  * 
  */
 
-package intol.bftmap;
+package bftsmart.intol.bftmap;
 
 public enum BFTMapRequestType {
     PUT,GET,SIZE,REMOVE,KEYSET

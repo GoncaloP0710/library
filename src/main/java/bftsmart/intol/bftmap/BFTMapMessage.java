@@ -1,4 +1,4 @@
-package intol.bftmap;
+package bftsmart.intol.bftmap;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
