@@ -63,6 +63,13 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
 
                     response.setSize(size);
                     return BFTMapMessage.toBytes(response);
+                case REMOVE:
+                    V removed = replicaMap.remove(request.getKey());
+
+                    if (removed != null) {
+                        response.setValue(removed);
+                    }
+                    return BFTMapMessage.toBytes(response);
             }
 
             return null;

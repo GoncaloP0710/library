@@ -67,7 +67,18 @@ public class BFTMapInteractiveClient {
 
             } else if (cmd.equalsIgnoreCase("REMOVE")) {
 
-                System.out.println("\tYou are supposed to implement this command :)\n");
+                int key;
+                try {
+                    key = Integer.parseInt(console.readLine("Enter a numeric key: "));
+                } catch (NumberFormatException e) {
+                    System.out.println("\tThe key is supposed to be an integer!\n");
+                    continue;
+                }
+
+                //invokes the op on the servers
+                String value = bftMap.remove(key);
+
+                System.out.println("\nValue associated with " + key + ": " + value + " removed\n");
 
             } else if (cmd.equalsIgnoreCase("SIZE")) {
 

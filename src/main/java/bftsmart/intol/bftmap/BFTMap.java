@@ -116,7 +116,31 @@ public class BFTMap<K, V> implements Map<K, V> {
 
     @Override
     public V remove(Object key) {
-        throw new UnsupportedOperationException("You are supposed to implement this method :)");
+
+        byte[] rep;
+        try {
+            BFTMapMessage<K,V> request = new BFTMapMessage<>();
+            request.setType(BFTMapRequestType.REMOVE);
+            request.setKey(key);
+
+            //invokes BFT-SMaRt
+            rep = serviceProxy.invokeOrdered(BFTMapMessage.toBytes(request));
+        } catch (IOException e) {
+            logger.error("Failed to send REMOVE request");
+            return null;
+        }
+
+        if (rep.length == 0) {
+            return null;
+        }
+        try {
+            BFTMapMessage<K,V> response = BFTMapMessage.fromBytes(rep);
+            return response.getValue();
+        } catch (ClassNotFoundException | IOException ex) {
+            logger.error("Failed to deserialized response of REMOVE request");
+            return null;
+        }
+
     }
 
     @Override
