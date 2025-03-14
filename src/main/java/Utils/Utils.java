@@ -1,11 +1,18 @@
 package Utils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import Crypto.Coin;
 
 public final class Utils {
     private Utils() {}
+
+    public static int generateId(int owner) {
+        Random random = new Random();
+        int salt = owner * 31;
+        return random.nextInt(100000) + salt;
+    }
 
     public static ArrayList<Integer> coinIdToArray(String[] coin_id_array) {
         ArrayList<Integer> coins_to_transfer = new ArrayList<>();

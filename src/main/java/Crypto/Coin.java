@@ -1,6 +1,6 @@
 package Crypto;
 
-import java.util.Random;
+import Utils.Utils;
 
 import java.io.Serializable;
 
@@ -11,15 +11,9 @@ public class Coin implements Serializable {
     private float value;
 
     public Coin(float value, int owner) {
-        this.id = generateId(owner);
+        this.id = Utils.generateId(owner);
         this.owner = owner;
         this.value = value;
-    }
-
-    private int generateId(int owner) {
-        Random random = new Random();
-        int salt = owner * 31;
-        return random.nextInt(100000) + salt;
     }
 
     public int getId() {
@@ -32,5 +26,17 @@ public class Coin implements Serializable {
 
     public float getValue() {
         return value;
+    }
+
+    public void setOwner(int owner) {
+        this.owner = owner;
+    }
+
+    public void setValue(float value) {
+        this.value = value;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
