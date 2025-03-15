@@ -7,12 +7,15 @@ package bftsmart.intol.bftmap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import Crypto.Coin;
+import Crypto.Nft;
 import bftsmart.tom.ServiceProxy;
 
 public class BFTMap<K, V> implements Map<K, V> {
@@ -209,9 +212,46 @@ public class BFTMap<K, V> implements Map<K, V> {
     public ArrayList<Object> getValues(ArrayList<K> key_array) {
         ArrayList<Object> value_array = new ArrayList<>();
         for (Object key : key_array) {
-            value_array.add(get(key));
+            if (get(key) != null) {
+                value_array.add(get(key));
+            }
         }
         return value_array;
+    }
+
+    public Collection<V> values(Class<?> forName) {
+        byte[] rep;
+        try {
+            BFTMapMessage<K,V> request = new BFTMapMessage<>();
+            request.setType(BFTMapRequestType.VALUES);
+
+            //invokes BFT-SMaRt
+            rep = serviceProxy.invokeUnordered(BFTMapMessage.toBytes(request));
+        } catch (IOException e) {
+            logger.error("Failed to send VALUES request");
+            return null;
+        }
+
+        if (rep.length == 0) {
+            return null;
+        }
+        try {
+            BFTMapMessage<K,V> response = BFTMapMessage.fromBytes(rep);
+            Collection<V> values = response.getValues();
+            
+            // Remove elements that are not instances of the specified class
+            for (Iterator<V> iterator = values.iterator(); iterator.hasNext();) {
+                Object obj = iterator.next();
+                if (!forName.isInstance(obj)) {
+                    iterator.remove();
+                }
+            }
+            
+            return values;
+        } catch (ClassNotFoundException | IOException ex) {
+            logger.error("Failed to deserialized response of VALUES request");
+            return null;
+        }
     }
 
 }
