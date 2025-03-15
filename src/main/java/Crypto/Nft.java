@@ -58,4 +58,8 @@ public class Nft {
         this.id = id;
     }
 
+    public String toString() {
+        return "Nft with id " + id + " and value " + value + " and name " + name + " and uri " + uri + "\n";
+    }
+
 }

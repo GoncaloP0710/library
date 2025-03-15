@@ -39,4 +39,8 @@ public class Coin implements Serializable {
     public void setId(int id) {
         this.id = id;
     }
+
+    public String toString() {
+        return "Coin with id " + id + " and value " + value;
+    }
 }

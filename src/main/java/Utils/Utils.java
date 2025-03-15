@@ -1,9 +1,11 @@
 package Utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
 
 import Crypto.Coin;
+import Crypto.Nft;
 
 public final class Utils {
     private Utils() {}
@@ -33,5 +35,25 @@ public final class Utils {
             sum += coin.getValue();
         }
         return value - sum;
+    }
+
+    public static boolean uniqueNftName(Collection<Nft> nfts, String name) {
+        for (Nft nft : nfts) {
+            if (nft.getName().equals(name)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static ArrayList<Nft> containsStr(Collection<Nft> nfts, String name) {
+        ArrayList<Nft> nfts_with_name = new ArrayList<>();
+        String lowerCaseName = name.toLowerCase();
+        for (Nft nft : nfts) {
+            if (nft.getName().toLowerCase().contains(lowerCaseName)) {
+                nfts_with_name.add(nft);
+            }
+        }
+        return nfts_with_name;
     }
 }
