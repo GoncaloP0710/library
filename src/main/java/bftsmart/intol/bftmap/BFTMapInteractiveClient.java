@@ -17,85 +17,27 @@ public class BFTMapInteractiveClient {
 
     public static void main(String[] args) throws IOException {
         int clientId = (args.length > 0) ? Integer.parseInt(args[0]) : 1001;
-        BFTMap<Integer, String> bftMap = new BFTMap<>(clientId);
-        BFTMap<Integer, Coin> coinMap = new BFTMap<>(clientId);
-        BFTMap<Integer, Nft> nftMap = new BFTMap<>(clientId);
+        BFTMap<Integer, Coin> coinMap = new BFTMap<>(Utils.generateId(clientId));
+        BFTMap<Integer, Nft> nftMap = new BFTMap<>(Utils.generateId(clientId));
+
+        System.out.println("\nWelcome to the BFTMap interactive client!\n");
 
         Console console = System.console();
 
         System.out.println("\nCommands:\n");
-        System.out.println("\tPUT: Insert value into the map");
-        System.out.println("\tGET: Retrieve value from the map");
-        System.out.println("\tSIZE: Retrieve the size of the map");
-        System.out.println("\tREMOVE: Removes the value associated with the supplied key");
-        System.out.println("\tKEYSET: List all keys available in the table");
-        System.out.println("\tEXIT: Terminate this client\n");
+        System.out.println("  MINT - Mint a new coin");
+        System.out.println("  MY_COINS - List the coins owned by the client");
+        System.out.println("  SPEND - Spend coins to another client");
+        System.out.println("  MY_NFTS - List the NFTs owned by the client");
+        System.out.println("  MINT_NFT - Mint a new NFT");
+        System.out.println("  SET_NFT_PRICE - Set the price of an NFT");
+        System.out.println("  SEARCH_NFT - Search for an NFT by name");
+        System.out.println("  BUY_NFT - Buy an NFT\n");
 
         while (true) {
             String cmd = console.readLine("\n  > ");
 
-            if (cmd.equalsIgnoreCase("PUT")) {
-
-                int key;
-                try {
-                    key = Integer.parseInt(console.readLine("Enter a numeric key: "));
-                } catch (NumberFormatException e) {
-                    System.out.println("\tThe key is supposed to be an integer!\n");
-                    continue;
-                }
-                String value = console.readLine("Enter an alpha-numeric value: ");
-
-                //invokes the op on the servers
-                bftMap.put(key, value);
-
-                System.out.println("\nkey-value pair added to the map\n");
-            } else if (cmd.equalsIgnoreCase("GET")) {
-
-                int key;
-                try {
-                    key = Integer.parseInt(console.readLine("Enter a numeric key: "));
-                } catch (NumberFormatException e) {
-                    System.out.println("\tThe key is supposed to be an integer!\n");
-                    continue;
-                }
-
-                //invokes the op on the servers
-                String value = bftMap.get(key);
-
-                System.out.println("\nValue associated with " + key + ": " + value + "\n");
-
-            } else if (cmd.equalsIgnoreCase("KEYSET")) {
-
-                System.out.println("\tYou are supposed to implement this command :)\n");
-
-            } else if (cmd.equalsIgnoreCase("REMOVE")) {
-
-                int key;
-                try {
-                    key = Integer.parseInt(console.readLine("Enter a numeric key: "));
-                } catch (NumberFormatException e) {
-                    System.out.println("\tThe key is supposed to be an integer!\n");
-                    continue;
-                }
-
-                //invokes the op on the servers
-                String value = bftMap.remove(key);
-
-                System.out.println("\nValue associated with " + key + ": " + value + " removed\n");
-
-            } else if (cmd.equalsIgnoreCase("SIZE")) {
-
-                //invokes the op on the servers
-                int size = bftMap.size();
-
-                System.out.println("\nSize of the map is " + size + "\n");
-
-            } else if (cmd.equalsIgnoreCase("EXIT")) {
-
-                System.out.println("\tEXIT: Bye bye!\n");
-                System.exit(0);
-
-            } else if (cmd.equalsIgnoreCase("MINT")) { // && clientId == 4) { // Make sure only the client 4 can mint coins
+            if (cmd.equalsIgnoreCase("MINT")) { // && clientId == 4) { // Make sure only the client 4 can mint coins
 
                 float coin_value;
                 try {
@@ -141,7 +83,9 @@ public class BFTMapInteractiveClient {
             } else if (cmd.equalsIgnoreCase("MY_NFTS")) {
 
                 Collection<Nft> nfts = nftMap.values();
+                System.out.println("NFTs owned by client " + clientId + ":");
                 for (Nft nft : nfts) {
+                    System.out.println(nft);
                     if (nft.getOwner() == clientId) {
                         System.out.println(nft);                    
                     }
@@ -170,7 +114,7 @@ public class BFTMapInteractiveClient {
 
                 Nft new_nft = new Nft(nft_name, nft_uri, nft_value, clientId);
                 nftMap.put(new_nft.getId(), new_nft);
-                System.out.println("\nNFT with id " + new_nft.getId() + " and value " + new_nft.getValue() + " minted\n");
+                System.out.println("\nNFT with id " + new_nft.getId() + ", value " + new_nft.getValue() + " and owner " + new_nft.getOwner() + " minted\n");
 
             } else if (cmd.equalsIgnoreCase("SET_NFT_PRICE")) {
 
@@ -231,8 +175,15 @@ public class BFTMapInteractiveClient {
                     continue;
                 }
 
-                // TODO: Catch the exceptions!!!
-                spend_coins(coinMap, clientId, nft.getValue(), nft.getOwner(), coins_id_to_transfer);
+                try {
+                    spend_coins(coinMap, clientId, nft.getValue(), nft.getOwner(), coins_id_to_transfer);
+                } catch (IllegalArgumentException e) {
+                    continue;
+                }
+
+                nft.setOwner(clientId);
+                nftMap.put(nft.getId(), nft);
+                System.out.println("\nNFT with id " + nft.getId() + " and value " + nft.getValue() + " bought\n");
 
             } else {
                 System.out.println("\tInvalid command :P\n");
@@ -274,5 +225,4 @@ public class BFTMapInteractiveClient {
             coinMap.put(change_coin.getId(), change_coin);
         }
     }
-
 }

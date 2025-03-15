@@ -34,7 +34,7 @@ public final class Utils {
         for (Coin coin : coins) {
             sum += coin.getValue();
         }
-        return value - sum;
+        return sum - value;
     }
 
     public static boolean uniqueNftName(Collection<Nft> nfts, String name) {

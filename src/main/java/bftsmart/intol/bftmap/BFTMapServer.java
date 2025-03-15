@@ -105,6 +105,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     response.setSize(size);
                     return BFTMapMessage.toBytes(response);
                 case VALUES:
+                    System.out.println("VALUES request received");
                     Collection<V> values = replicaMap.values();
 
                     if (values != null) {

@@ -1,8 +1,10 @@
 package Crypto;
 
+import java.io.Serializable;
+
 import Utils.Utils;
 
-public class Nft {
+public class Nft implements Serializable{
 
     private int id;
     private int owner;
