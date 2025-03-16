@@ -33,7 +33,7 @@ public class BFTMapInteractiveClient {
 
                 InterfaceHandler.help();
                 
-            } else if (cmd.equalsIgnoreCase("MINT")) { // && clientId == 4) { // Make sure only the client 4 can mint coins
+            } else if (cmd.equalsIgnoreCase("MINT") && clientId == 4) { // Make sure only the client 4 can mint coins
 
                 float coin_value;
                 try {

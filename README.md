@@ -53,7 +53,7 @@ The system keeps track of two types of tokens and their ownership. These tokens 
 ## Build the Project
 To build the project, run the following command:
 ```sh
-java -cp <classpath> ./gradlew installDist
+./gradlew installDist
 ```
 To enable read-only operations, open the file ./config/system.config and change the option in the last line to true.
 
