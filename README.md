@@ -48,6 +48,10 @@ The system keeps track of two types of tokens and their ownership. These tokens 
 - **SEARCH_NFT(text)**: List the id, name, URI, and value of the NFTs whose name contains the provided text (ignores case).
 - **BUY_NFT(nft, coins)**: Requires an array with the IDs of the coins that will be used as input and the ID of the NFT to be bought. If the indicated coins provide enough funds to execute the transaction (sum(coins) >= nft.value), the operation changes the NFT owner field to the buyer ID, deletes the provided coins, and generates two coins, one for the NFT owner with the value it received and another for the issuer (who invoked the operation) with the remaining value (sum(coins) - value). The operation returns either the ID of the coin created for the issuer with the remaining value, 0 in case no coin was created (due to no remain), or -1 if the operation failed.
 
+### Potential Optimizations
+
+### Limitations
+
 ## Getting Started
 
 ## Build the Project
@@ -66,5 +70,5 @@ cd build/install/library && ./smartrun.sh bftsmart.intol.bftmap.BFTMapServer <se
 ### Running the Client
 To start the client, run the following command:
 ```sh
-cd build/install/library && ./smartrun.sh bftsmart.intol.bftmap.BFTMapInteractiveClient <server id>
+cd build/install/library && ./smartrun.sh bftsmart.intol.bftmap.BFTMapInteractiveClient <client id>
 ```
