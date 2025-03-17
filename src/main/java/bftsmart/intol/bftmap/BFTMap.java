@@ -178,7 +178,6 @@ public class BFTMap<K, V> implements Map<K, V> {
 
     @Override
     public Collection<V> values() {
-
         byte[] rep;
         try {
             BFTMapMessage<K,V> request = new BFTMapMessage<>();
@@ -245,13 +244,13 @@ public class BFTMap<K, V> implements Map<K, V> {
                 if (!forName.isInstance(obj)) {
                     iterator.remove();
                 }
-            }
+            }          
             
             return values;
         } catch (ClassNotFoundException | IOException ex) {
             logger.error("Failed to deserialized response of VALUES request");
             return null;
         }
+        
     }
-
 }

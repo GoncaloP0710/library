@@ -6,6 +6,7 @@ package bftsmart.intol.bftmap;
 
 import Crypto.Coin;
 import Crypto.Nft;
+import Exceptions.InvalidPaymentException;
 import Exceptions.NotEnoughMoneyException;
 import Utils.InterfaceHandler;
 import Utils.Utils;
@@ -81,6 +82,8 @@ public class BFTMapInteractiveClient {
                 try {
                     spend_coins(coinMap, clientId, transfer_value, reciver_id, coins_id_to_transfer);
                 } catch (NotEnoughMoneyException e) {
+                    continue mainLoop;
+                } catch (InvalidPaymentException e) {
                     continue mainLoop;
                 }
 
@@ -185,6 +188,8 @@ public class BFTMapInteractiveClient {
                     spend_coins(coinMap, clientId, nft.getValue(), nft.getOwner(), coins_id_to_transfer);
                 } catch (NotEnoughMoneyException e) {
                     continue mainLoop;
+                } catch (InvalidPaymentException e) {
+                    continue mainLoop;
                 }
 
                 nft.setOwner(clientId);
@@ -206,30 +211,39 @@ public class BFTMapInteractiveClient {
      * @param reciver_id ID of the receiver
      * @param coins_id_to_transfer IDs of the coins to transfer
      * @throws NotEnoughMoneyException  If the sum of the coins is lower than the transfer value
+    * @throws InvalidPaymentException 
     */
-    private static void spend_coins(BFTMap<Integer, Coin> coinMap, int clientId, float transfer_value, int reciver_id, ArrayList<Integer> coins_id_to_transfer) throws NotEnoughMoneyException {
-        @SuppressWarnings("unchecked")
-        ArrayList<Coin> coins_to_transfer = (ArrayList<Coin>) (ArrayList<?>) coinMap.getValues(coins_id_to_transfer);
-
-        float coins_change = Utils.coins_change(coins_to_transfer, transfer_value);
-        if (coins_change < 0) {
-            InterfaceHandler.erro("\tThe sum of the coins is lower than the transfer value!\n");
-            throw new NotEnoughMoneyException("The sum of the coins is lower than the transfer value!");
-        }
-
-        // Remove the coins from the sender
-        for (Coin coin : coins_to_transfer) {
-            coinMap.remove(coin.getId());
-        }
-
-        // Create new coin for the receiver
-        Coin new_coin = new Coin(transfer_value, reciver_id);
-        coinMap.put(new_coin.getId(), new_coin);
-
-        // Create new coin for the sender with the change
-        if (coins_change > 0) {
-            Coin change_coin = new Coin(coins_change, clientId);
-            coinMap.put(change_coin.getId(), change_coin);
-        }
+    private static void spend_coins(BFTMap<Integer, Coin> coinMap, int clientId, float transfer_value, int reciver_id, ArrayList<Integer> coins_id_to_transfer) throws NotEnoughMoneyException, InvalidPaymentException {
+        ArrayList<Object> values = coinMap.getValues(coins_id_to_transfer);
+        ArrayList<Coin> coins_to_transfer = new ArrayList<>();
+            for (Object value : values) {
+                if (value instanceof Coin) {
+                    coins_to_transfer.add((Coin) value);
+                } else {
+                    InterfaceHandler.erro("\tInvalid coin ID: " + value + " is not a Coin\n");
+                    throw new InvalidPaymentException("Invalid coin ID: " + value + " is not a Coin");
+                }
+            }
+    
+            float coins_change = Utils.coins_change(coins_to_transfer, transfer_value);
+            if (coins_change < 0) {
+                InterfaceHandler.erro("\tThe sum of the coins is lower than the transfer value!\n");
+                throw new NotEnoughMoneyException("The sum of the coins is lower than the transfer value!");
+            }
+    
+            // Remove the coins from the sender
+            for (Coin coin : coins_to_transfer) {
+                coinMap.remove(coin.getId());
+            }
+    
+            // Create new coin for the receiver
+            Coin new_coin = new Coin(transfer_value, reciver_id);
+            coinMap.put(new_coin.getId(), new_coin);
+    
+            // Create new coin for the sender with the change
+            if (coins_change > 0) {
+                Coin change_coin = new Coin(coins_change, clientId);
+                coinMap.put(change_coin.getId(), change_coin);
+            }
     }
 }
