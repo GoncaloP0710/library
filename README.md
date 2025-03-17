@@ -50,25 +50,48 @@ The system keeps track of two types of tokens and their ownership. These tokens 
 
 ### Potential Optimizations
 
+Improvements on the ease of use of the application, making the user use less commands or be more with those that it uses.
+Improvements on the User Interface instead of using pure simple terminal.
+Give more feedback on the user's actions such as confirmations or erros.
+(Improvements on the security of the accounts.)
+
+
 ### Limitations
+
+All the required functionalities for the project are working
 
 ## Getting Started
 
 ## Build the Project
 To build the project, run the following command:
+Linux:
 ```sh
 ./gradlew installDist
 ```
-To enable read-only operations, open the file ./config/system.config and change the option in the last line to true.
+Windows:
+```sh
+gradlew installDist
+```
+To **enable read-only operations**, open the file build/install/library/config/system.config and change the option in the last line to true.
 
 ### Running the Server
 To start the server, run the following command:
+Linux:
 ```sh
 cd build/install/library && ./smartrun.sh bftsmart.intol.bftmap.BFTMapServer <server id>
+```
+Windows:
+```sh
+cd build/install/library && smartrun.cmd bftsmart.intol.bftmap.BFTMapServer <server id>
 ```
 
 ### Running the Client
 To start the client, run the following command:
+Linux:
 ```sh
 cd build/install/library && ./smartrun.sh bftsmart.intol.bftmap.BFTMapInteractiveClient <client id>
+```
+Windows:
+```sh
+cd build/install/library && smartrun.cmd bftsmart.intol.bftmap.BFTMapInteractiveClient <client id>
 ```

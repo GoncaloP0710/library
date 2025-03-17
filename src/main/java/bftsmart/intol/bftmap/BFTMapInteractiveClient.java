@@ -39,6 +39,10 @@ public class BFTMapInteractiveClient {
                 float coin_value;
                 try {
                     coin_value = Integer.parseInt(console.readLine("Enter the value of the coin: "));
+                    if (coin_value <= 0) {
+                        InterfaceHandler.erro("\tThe value of the coin must be greater than 0!\n");
+                        continue mainLoop;
+                    }
                 } catch (NumberFormatException e) {
                     InterfaceHandler.erro("\tThe value is supposed to be a float!\n");
                     continue mainLoop;
@@ -71,6 +75,10 @@ public class BFTMapInteractiveClient {
 
                 try {
                     transfer_value = Float.parseFloat(console.readLine("Enter the value to transfer: "));
+                    if(transfer_value <= 0){
+                        InterfaceHandler.erro("\tThe value of the coin must be greater than 0!\n");
+                        continue mainLoop;
+                    }
                     reciver_id = Integer.parseInt(console.readLine("Enter the id of the receiver: "));
                     String coin_ids = console.readLine("Enter the IDs of the coins to transfer (comma-separated): ");
                     coins_id_to_transfer = Utils.coinIdToArray(coin_ids.split(","));
@@ -116,6 +124,11 @@ public class BFTMapInteractiveClient {
 
                     nft_uri = console.readLine("Enter the URI of the NFT: ");
                     nft_value = Float.parseFloat(console.readLine("Enter the value of the NFT: "));
+
+                    if (nft_value <= 0) {
+                        InterfaceHandler.erro("\tThe value of the NFT must be greater than 0!\n");
+                        continue mainLoop;
+                    }
                 } catch (NumberFormatException e) {
                     InterfaceHandler.erro("\tThe value is supposed to be a float!\n");
                     continue mainLoop;
@@ -133,6 +146,10 @@ public class BFTMapInteractiveClient {
                 try {
                     nft_name = console.readLine("Enter the name of the NFT: ");
                     new_price = Float.parseFloat(console.readLine("Enter the new price of the NFT: "));
+                    if(new_price <= 0){
+                        InterfaceHandler.erro("\tThe value of the coin must be greater than 0!\n");
+                        continue mainLoop;  
+                    }
                 } catch (NumberFormatException e) {
                     InterfaceHandler.erro("\tThe values were of an incorrect type!\n");
                     continue mainLoop;
