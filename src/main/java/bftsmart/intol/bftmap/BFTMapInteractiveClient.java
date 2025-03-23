@@ -188,6 +188,11 @@ public class BFTMapInteractiveClient {
 
                 try {
                     nft_id = Integer.parseInt(console.readLine("Enter the ID of the NFT to buy: "));
+                    Nft nft = nftMap.get(nft_id);
+                    if (nft.getOwner() == clientId) {
+                        InterfaceHandler.erro("\tYou already own this NFT!\n");
+                        continue mainLoop;
+                    } 
                     String coin_ids = console.readLine("Enter the IDs of the coins to transfer (comma-separated): ");
                     coins_id_to_transfer = Utils.coinIdToArray(coin_ids.split(","));
                 } catch (NumberFormatException e) {

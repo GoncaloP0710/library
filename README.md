@@ -58,7 +58,8 @@ Give more feedback on the user's actions such as confirmations or erros.
 
 ### Limitations
 
-All the required functionalities for the project are working
+All the required functionalities for the project are working.
+It is necessary to write the command name exactly as shown without spaces neither before nor after the command name
 
 ## Getting Started
 
@@ -68,7 +69,7 @@ Linux:
 ```sh
 ./gradlew installDist
 ```
-Windows:
+Windows cmd:
 ```sh
 gradlew installDist
 ```
@@ -80,7 +81,7 @@ Linux:
 ```sh
 cd build/install/library && ./smartrun.sh bftsmart.intol.bftmap.BFTMapServer <server id>
 ```
-Windows:
+Windows cmd:
 ```sh
 cd build/install/library && smartrun.cmd bftsmart.intol.bftmap.BFTMapServer <server id>
 ```
@@ -91,7 +92,7 @@ Linux:
 ```sh
 cd build/install/library && ./smartrun.sh bftsmart.intol.bftmap.BFTMapInteractiveClient <client id>
 ```
-Windows:
+Windows cmd:
 ```sh
 cd build/install/library && smartrun.cmd bftsmart.intol.bftmap.BFTMapInteractiveClient <client id>
 ```
