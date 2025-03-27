@@ -6,32 +6,36 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import Crypto.Coin;
+import Crypto.Nft;
 
 public class BFTMapMessage implements Serializable {
 
     private BFTMapRequestType type;
 
+    // TODO: Should we send the objects Nft and Coin or just the info?
+
     // ----------------------------> Coins - Request
     private float coin_value; // MINT / SPEND
     private String reciver_id; // SPEND
-    private String[] coins_id; // SPEND / BUY_NFT
+    private ArrayList<Integer> coins_id; // SPEND / BUY_NFT
 
     // ----------------------------> Coins - Response
     private Collection<Coin> coins; // MY_COINS
     private int coin_id; // MINT / SPEND
 
     // ----------------------------> NFTs - Request
-    private String nft_id; // SET_NFT_PRICE / BUY_NFT
+    private int nft_id; // SET_NFT_PRICE / BUY_NFT / MINT_NFT - Response / BUY_NFT - Response
     private String nft_name; // MINT_NFT
     private String nft_uri; // MINT_NFT
     private float nft_value; // MINT_NFT / SET_NFT_PRICE
     private String nft_text; // SEARCH_NFT
 
     // ----------------------------> NFTs - Response
-    // TODO: Implement NFTs response
+    private Collection<Nft> nfts; // MY_NFTS / SEARCH_NFT
 
     public BFTMapMessage() {
     }
@@ -78,11 +82,11 @@ public class BFTMapMessage implements Serializable {
         this.reciver_id = reciver_id;
     }
 
-    public String[] getCoinsId() {
+    public ArrayList<Integer> getCoinsId() {
         return coins_id;
     }
 
-    public void setCoinsId(String[] coins_id) {
+    public void setCoinsId(ArrayList<Integer> coins_id) {
         this.coins_id = coins_id;
     }
 
@@ -104,11 +108,11 @@ public class BFTMapMessage implements Serializable {
     }
 
     // ----------------------------> NFTs
-    public String getNftId() {
+    public int getNftId() {
         return nft_id;
     }
 
-    public void setNftId(String nft_id) {
+    public void setNftId(int nft_id) {
         this.nft_id = nft_id;
     }
 
@@ -142,5 +146,13 @@ public class BFTMapMessage implements Serializable {
 
     public void setNftText(String nft_text) {
         this.nft_text = nft_text;
+    }
+
+    public Collection<Nft> getNfts() {
+        return nfts;
+    }
+
+    public void setNfts(Collection<Nft> nfts) {
+        this.nfts = nfts;
     }
 }
