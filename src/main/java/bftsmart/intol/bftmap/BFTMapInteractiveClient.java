@@ -20,8 +20,8 @@ public class BFTMapInteractiveClient {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         int clientId = (args.length > 0) ? Integer.parseInt(args[0]) : 1001;
-        BFTMap<Integer, Coin> coinMap = new BFTMap<>(Utils.generateId(clientId));
-        BFTMap<Integer, Nft> nftMap = new BFTMap<>(Utils.generateId(clientId+1)+1);
+        BFTProxy<Integer, Coin> coinMap = new BFTProxy<>(Utils.generateId(clientId));
+        BFTProxy<Integer, Nft> nftMap = new BFTProxy<>(Utils.generateId(clientId+1)+1);
         Console console = System.console();
         InterfaceHandler.startUp();
         InterfaceHandler.help();
@@ -34,6 +34,7 @@ public class BFTMapInteractiveClient {
 
                 InterfaceHandler.help();
                 
+            // TODO: Cena do id 4?????????????????????????
             } else if (cmd.equalsIgnoreCase("MINT") && clientId == 4) { // Make sure only the client 4 can mint coins
 
                 float coin_value;
@@ -235,7 +236,7 @@ public class BFTMapInteractiveClient {
      * @throws NotEnoughMoneyException  If the sum of the coins is lower than the transfer value
     * @throws InvalidPaymentException 
     */
-    private static void spend_coins(BFTMap<Integer, Coin> coinMap, int clientId, float transfer_value, int reciver_id, ArrayList<Integer> coins_id_to_transfer) throws NotEnoughMoneyException, InvalidPaymentException {
+    private static void spend_coins(BFTProxy<Integer, Coin> coinMap, int clientId, float transfer_value, int reciver_id, ArrayList<Integer> coins_id_to_transfer) throws NotEnoughMoneyException, InvalidPaymentException {
         ArrayList<Object> values = coinMap.getValues(coins_id_to_transfer);
         ArrayList<Coin> coins_to_transfer = new ArrayList<>();
             for (Object value : values) {

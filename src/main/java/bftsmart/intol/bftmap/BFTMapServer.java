@@ -39,13 +39,14 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
     public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
         //all operations must be defined here to be invoked by BFT-SMaRt
         try {
-            BFTMapMessage<K,V> response = new BFTMapMessage<>();
-            BFTMapMessage<K,V> request = BFTMapMessage.fromBytes(command);
+            BFTMapMessage response = new BFTMapMessage();
+            BFTMapMessage request = BFTMapMessage.fromBytes(command);
             BFTMapRequestType cmd = request.getType();
 
             logger.info("Ordered execution of a {} request from {}", cmd, msgCtx.getSender());
 
             switch (cmd) {
+                /** 
                 case PUT:
                     V oldValue = replicaMap.put(request.getKey(), request.getValue());
 
@@ -72,6 +73,25 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                         response.setValue(removed);
                     }
                     return BFTMapMessage.toBytes(response);
+                */
+
+                // -----------------------------------------> Coins
+                case MY_COINS:
+
+                case MINT:
+
+                case SPEND:
+
+                // -----------------------------------------> NFTs
+                case MY_NFTS:
+
+                case MINT_NFT:
+
+                case SET_NFT_PRICE:
+
+                case SEARCH_NFT:
+
+                case BUY_NFT:
             }
 
             return null;
@@ -83,41 +103,8 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
 
     @Override
     public byte[] appExecuteUnordered(byte[] command, MessageContext msgCtx) {
-        //read-only operations can be defined here to be invoked without running consensus
-        try {
-            BFTMapMessage<K,V> response = new BFTMapMessage<>();
-            BFTMapMessage<K,V> request = BFTMapMessage.fromBytes(command);
-            BFTMapRequestType cmd = request.getType();
-
-            logger.info("Unordered execution of a {} request from {}", cmd, msgCtx.getSender());
-
-            switch (cmd) {
-                case GET:
-                    V ret = replicaMap.get(request.getKey());
-
-                    if (ret != null) {
-                        response.setValue(ret);
-                    }
-                    return BFTMapMessage.toBytes(response);
-                case SIZE:
-                    int size = replicaMap.size();
-                    
-                    response.setSize(size);
-                    return BFTMapMessage.toBytes(response);
-                case VALUES:
-                    System.out.println("VALUES request received");
-                    Collection<V> values = replicaMap.values();
-
-                    if (values != null) {
-                        response.setValues(new ArrayList<>(values)); // Convert to a serializable form
-                    }
-                    return BFTMapMessage.toBytes(response);
-            }
-        } catch (IOException | ClassNotFoundException ex) {
-            logger.error("Failed to process unordered request", ex);
-            return new byte[0];
-        }
-        return null;
+        logger.info("Unordered execution of a request from {}", msgCtx.getSender());
+        return new byte[0]; // Return an appropriate response
     }
 
     @Override

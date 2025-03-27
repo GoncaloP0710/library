@@ -6,6 +6,16 @@
 package bftsmart.intol.bftmap;
 
 public enum BFTMapRequestType {
-    PUT,GET,SIZE,REMOVE,KEYSET,VALUES
-}
 
+    // ----------------------------> Coins
+    MY_COINS,
+    MINT,
+    SPEND,
+
+    // ----------------------------> NFTs
+    MY_NFTS,
+    MINT_NFT,
+    SET_NFT_PRICE,
+    SEARCH_NFT,
+    BUY_NFT,
+}
