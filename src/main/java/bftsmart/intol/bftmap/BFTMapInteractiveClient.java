@@ -18,8 +18,8 @@ public class BFTMapInteractiveClient {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         int clientId = (args.length > 0) ? Integer.parseInt(args[0]) : 1001;
-        BFTProxy coinProxy = new BFTProxy(Utils.generateId(clientId));
-        BFTProxy nftProxy = new BFTProxy(Utils.generateId(clientId+1)+1);
+        BFTProxy coinProxy = new BFTProxy(clientId);
+        BFTProxy nftProxy = new BFTProxy(clientId);
         Console console = System.console();
         InterfaceHandler.startUp();
         InterfaceHandler.help();

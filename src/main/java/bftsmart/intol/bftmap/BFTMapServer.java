@@ -54,6 +54,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
             switch (cmd) {
                 // -----------------------------------------> Coins
                 case MY_COINS:
+                    System.out.println("MY_COINS request from " + msgCtx.getSender()); 
                     Collection<Coin> coins = new ArrayList<>();
                     for (V coin : replicaMapCoin.values()) {
                         if (coin instanceof Coin && ((Coin) coin).getOwner() == msgCtx.getSender())
@@ -63,6 +64,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     return BFTMapMessage.toBytes(response);
 
                 case MINT:
+                    System.out.println("MINT request from " + msgCtx.getSender()); 
                     if (msgCtx.getSender() == 4) {
                         float value = request.getCoinValue();
                         if (value > 0) {
@@ -78,6 +80,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     return BFTMapMessage.toBytes(response);
 
                 case SPEND:
+                    System.out.println("SPEND request from " + msgCtx.getSender());
                     // Get the coins to spend
                     ArrayList<Coin> coins_to_spend = new ArrayList<>();
                     for (Integer coin_id : request.getCoinsId()) {
@@ -110,6 +113,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     
                 // -----------------------------------------> NFTs
                 case MY_NFTS:
+                    System.out.println("MY_NFTS request from " + msgCtx.getSender());
                     Collection<Nft> nfts = new ArrayList<>();
                     for (V nft : replicaMapNft.values()) {
                         if (nft instanceof Nft && ((Nft) nft).getOwner() == msgCtx.getSender())
@@ -119,7 +123,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     return BFTMapMessage.toBytes(response);
 
                 case MINT_NFT:
-
+                    System.out.println("MINT_NFT request from " + msgCtx.getSender());
                     float value = request.getNftValue();
                     String name = request.getNftName();
                     String uri = request.getNftUri();
@@ -142,7 +146,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     return BFTMapMessage.toBytes(response);
 
                 case SET_NFT_PRICE:
-
+                    System.out.println("SET_NFT_PRICE request from " + msgCtx.getSender());
                     int nft_id = request.getNftId();
                     float nft_value = request.getNftValue();
                     Nft nft = (Nft) replicaMapNft.get((K) Integer.valueOf(nft_id));
@@ -158,7 +162,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     return BFTMapMessage.toBytes(response);
 
                 case SEARCH_NFT:
-                    
+                    System.out.println("SEARCH_NFT request from " + msgCtx.getSender());
                     String nft_name = request.getNftName();
                     Collection<Nft> nfts_found = new ArrayList<>();
                     for (V nft_search : replicaMapNft.values()) {
@@ -169,7 +173,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     return BFTMapMessage.toBytes(response);
 
                 case BUY_NFT:
-                    
+                    System.out.println("BUY_NFT request from " + msgCtx.getSender());
                     Nft nft_to_buy = (Nft) replicaMapNft.get((K) Integer.valueOf(request.getNftId()));
                     if (nft_to_buy == null) {
                         response.setCoinId(-1);
