@@ -6,8 +6,6 @@ package bftsmart.intol.bftmap;
 
 import Crypto.Coin;
 import Crypto.Nft;
-import Exceptions.InvalidPaymentException;
-import Exceptions.NotEnoughMoneyException;
 import Utils.InterfaceHandler;
 import Utils.Utils;
 
@@ -138,29 +136,24 @@ public class BFTMapInteractiveClient {
                 try {
                     nft_name = console.readLine("Enter the name of the NFT: ");
                     new_price = Float.parseFloat(console.readLine("Enter the new price of the NFT: "));
-                    if(new_price <= 0){
-                        InterfaceHandler.erro("\tThe value of the coin must be greater than 0!\n");
-                        continue mainLoop;  
-                    }
                 } catch (NumberFormatException e) {
                     InterfaceHandler.erro("\tThe values were of an incorrect type!\n");
                     continue mainLoop;
                 }
-                Collection<Nft> nfts = nftMap.values(Class.forName("Crypto.Nft"));
-                for (Nft nft : nfts) {
-                    if (nft.getOwner() == clientId && nft.getName().equals(nft_name)) {
-                        nft.setValue(new_price);
-                        nftMap.put(nft.getId(), nft);
-                        InterfaceHandler.success("NFT with id " + nft.getId() + " and value " + nft.getValue() + " updated\n");
-                        continue mainLoop;
-                    }
+
+                int response = nftProxy.Set_Nft_Price(nft_name, new_price);
+
+                if (response == -1) {
+                    InterfaceHandler.erro("\tThe price could not be set!\n");
+                    continue mainLoop;
                 }
 
-                InterfaceHandler.erro("\tThe NFT with the name " + nft_name + " was not found!\n");
+                InterfaceHandler.success("Price of NFT " + nft_name + " set to " + new_price + "\n");
 
             } else if (cmd.equalsIgnoreCase("SEARCH_NFT")) {
 
                 String nft_name;
+
                 try {
                     nft_name = console.readLine("Enter the string of the NFT to search: ");
                 } catch (NumberFormatException e) {
@@ -168,7 +161,8 @@ public class BFTMapInteractiveClient {
                     continue mainLoop;
                 }
                 
-                Collection<Nft> nfts = Utils.containsStr(nftMap.values(Class.forName("Crypto.Nft")), nft_name);
+                Collection<Nft> nfts = nftProxy.Search_Nft(nft_name);
+
                 for (Nft nft : nfts) {
                     InterfaceHandler.info(nft.toString());
                 }
@@ -180,84 +174,23 @@ public class BFTMapInteractiveClient {
 
                 try {
                     nft_id = Integer.parseInt(console.readLine("Enter the ID of the NFT to buy: "));
-                    Nft nft = nftMap.get(nft_id);
-                    if (nft.getOwner() == clientId) {
-                        InterfaceHandler.erro("\tYou already own this NFT!\n");
-                        continue mainLoop;
-                    } 
                     String coin_ids = console.readLine("Enter the IDs of the coins to transfer (comma-separated): ");
                     coins_id_to_transfer = Utils.coinIdToArray(coin_ids.split(","));
+
+                    int response = nftProxy.Buy_Nft(nft_id, coins_id_to_transfer);
+
+                    if (response == -1) {
+                        InterfaceHandler.erro("\tThe NFT could not be bought!\n");
+                        continue mainLoop;
+                    }
+
                 } catch (NumberFormatException e) {
                     InterfaceHandler.erro("\tThe format of the value or receiver ID is wrong!\n");
                     continue mainLoop;
                 }
-
-                Nft nft = nftMap.get(nft_id);
-                if (nft == null) {
-                    InterfaceHandler.erro("\tThe NFT with the ID " + nft_id + " was not found!\n");
-                    continue mainLoop;
-                }
-
-                try {
-                    spend_coins(coinMap, clientId, nft.getValue(), nft.getOwner(), coins_id_to_transfer);
-                } catch (NotEnoughMoneyException e) {
-                    continue mainLoop;
-                } catch (InvalidPaymentException e) {
-                    continue mainLoop;
-                }
-
-                nft.setOwner(clientId);
-                nftMap.put(nft.getId(), nft);
-                InterfaceHandler.success("NFT with id " + nft.getId() + " and value " + nft.getValue() + " bought\n");
-
             } else {
                 InterfaceHandler.erro("\tInvalid command :P\n");
             }
         }
-    }
-
-    /**
-     * Transfer coins from one client to another.
-     * 
-     * @param coinMap BFTMap of coins
-     * @param clientId ID of the sender
-     * @param transfer_value Value to transfer
-     * @param reciver_id ID of the receiver
-     * @param coins_id_to_transfer IDs of the coins to transfer
-     * @throws NotEnoughMoneyException  If the sum of the coins is lower than the transfer value
-    * @throws InvalidPaymentException 
-    */
-    private static void spend_coins(BFTProxy<Integer, Coin> coinMap, int clientId, float transfer_value, int reciver_id, ArrayList<Integer> coins_id_to_transfer) throws NotEnoughMoneyException, InvalidPaymentException {
-        ArrayList<Object> values = coinMap.getValues(coins_id_to_transfer);
-        ArrayList<Coin> coins_to_transfer = new ArrayList<>();
-            for (Object value : values) {
-                if (value instanceof Coin) {
-                    coins_to_transfer.add((Coin) value);
-                } else {
-                    InterfaceHandler.erro("\tInvalid coin ID: " + value + " is not a Coin\n");
-                    throw new InvalidPaymentException("Invalid coin ID: " + value + " is not a Coin");
-                }
-            }
-    
-            float coins_change = Utils.coins_change(coins_to_transfer, transfer_value);
-            if (coins_change < 0) {
-                InterfaceHandler.erro("\tThe sum of the coins is lower than the transfer value!\n");
-                throw new NotEnoughMoneyException("The sum of the coins is lower than the transfer value!");
-            }
-    
-            // Remove the coins from the sender
-            for (Coin coin : coins_to_transfer) {
-                coinMap.remove(coin.getId());
-            }
-    
-            // Create new coin for the receiver
-            Coin new_coin = new Coin(transfer_value, reciver_id);
-            coinMap.put(new_coin.getId(), new_coin);
-    
-            // Create new coin for the sender with the change
-            if (coins_change > 0) {
-                Coin change_coin = new Coin(coins_change, clientId);
-                coinMap.put(change_coin.getId(), change_coin);
-            }
     }
 }

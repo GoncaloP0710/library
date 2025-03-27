@@ -158,13 +158,56 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     return BFTMapMessage.toBytes(response);
 
                 case SEARCH_NFT:
-                    return null;
+                    
+                    String nft_name = request.getNftName();
+                    Collection<Nft> nfts_found = new ArrayList<>();
+                    for (V nft_search : replicaMapNft.values()) {
+                        if (nft_search instanceof Nft && ((Nft) nft_search).getName().toLowerCase().contains(nft_name.toLowerCase()))
+                            nfts_found.add((Nft) nft_search);
+                    }
+                    response.setNfts(nfts_found);
+                    return BFTMapMessage.toBytes(response);
 
                 case BUY_NFT:
-                    return null;
+                    
+                    Nft nft_to_buy = (Nft) replicaMapNft.get((K) Integer.valueOf(request.getNftId()));
+                    if (nft_to_buy == null) {
+                        response.setCoinId(-1);
+                        return BFTMapMessage.toBytes(response);
+                    }
 
+                    ArrayList<Coin> coins_to_buy = new ArrayList<>();
+                    for (Integer coin_id : request.getCoinsId()) {
+                        Coin coin = (Coin) replicaMapCoin.get((K) coin_id);
+                        if (coin != null && coin.getOwner() == msgCtx.getSender()) {
+                            coins_to_buy.add(coin);
+                        }
+                    }
+
+                    float coins_change2 = Utils.coins_change(coins_to_buy, request.getCoinValue());
+                    if (coins_change2 < 0) {
+                        response.setCoinId(-1);
+                        return BFTMapMessage.toBytes(response);
+                    } else {
+                        for (Coin coin : coins_to_buy) { // Remove the coins from the sender
+                            replicaMapCoin.remove((K) Integer.valueOf(coin.getId()));
+                        }
+
+                        // Create new coin for the receiver
+                        Coin new_coin = new Coin(request.getCoinValue(), Integer.parseInt(request.getReciverId()));
+                        replicaMapCoin.put((K) Integer.valueOf(new_coin.getId()), (V) new_coin);
+                    
+                        if (coins_change2 > 0) { // Create new coin for the sender with the change
+                            Coin change = new Coin(coins_change2, msgCtx.getSender());
+                            replicaMapCoin.put((K) Integer.valueOf(change.getId()), (V) change);
+                        }
+
+                        nft_to_buy.setOwner(msgCtx.getSender());
+                        replicaMapNft.put((K) Integer.valueOf(nft_to_buy.getId()), (V) nft_to_buy);
+                        response.setCoinId(new_coin.getId());
+                        return BFTMapMessage.toBytes(response);
+                    }
             }
-
             return null;
         }catch (IOException | ClassNotFoundException ex) {
             logger.error("Failed to process ordered request", ex);
@@ -193,7 +236,6 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void installSnapshot(byte[] state) {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(state);

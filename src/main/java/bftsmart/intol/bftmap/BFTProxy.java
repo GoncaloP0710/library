@@ -168,13 +168,13 @@ public class BFTProxy {
         
     }
 
-    public int Set_Nft_Price(int nftId, float nftPrice) {
+    public int Set_Nft_Price(String nftName, float nftPrice) {
         byte[] rep;
 
         try {
             BFTMapMessage request = new BFTMapMessage();
             request.setType(BFTMapRequestType.SET_NFT_PRICE);
-            request.setNftId(nftId); // Set nft values
+            request.setNftName(nftName); // Set nft values
             request.setNftValue(nftPrice);
 
             //invokes BFT-SMaRt
@@ -196,13 +196,14 @@ public class BFTProxy {
         }
     }
 
-    public int Buy_Nft(int nftId) {
+    public int Buy_Nft(int nftId, ArrayList<Integer> coinsId) {
         byte[] rep;
 
         try {
             BFTMapMessage request = new BFTMapMessage();
             request.setType(BFTMapRequestType.BUY_NFT);
             request.setNftId(nftId); // Set nft values
+            request.setCoinsId(coinsId);
 
             //invokes BFT-SMaRt
             rep = serviceProxy.invokeOrdered(BFTMapMessage.toBytes(request));
@@ -216,19 +217,19 @@ public class BFTProxy {
         }
         try {
             BFTMapMessage response = BFTMapMessage.fromBytes(rep);
-            return (int) response.getNftId();
+            return (int) response.getCoinId();
         } catch (ClassNotFoundException | IOException ex) {
             logger.error("Failed to deserialized response of BUY_NFT request");
             return -1;
         }
     }
 
-    public Collection<Nft> search_Nft(String nftValue) {
+    public Collection<Nft> Search_Nft(String nftValue) {
         byte[] rep;
         try {
             BFTMapMessage request = new BFTMapMessage();
             request.setType(BFTMapRequestType.SEARCH_NFT);
-            response.setNftName(nftValue);
+            request.setNftName(nftValue);
 
             //invokes BFT-SMaRt
             rep = serviceProxy.invokeOrdered(BFTMapMessage.toBytes(request));
