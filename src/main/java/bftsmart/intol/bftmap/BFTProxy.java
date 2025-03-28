@@ -168,13 +168,13 @@ public class BFTProxy {
         
     }
 
-    public int Set_Nft_Price(String nftName, float nftPrice) {
+    public int Set_Nft_Price(int nftId, float nftPrice) {
         byte[] rep;
 
         try {
             BFTMapMessage request = new BFTMapMessage();
             request.setType(BFTMapRequestType.SET_NFT_PRICE);
-            request.setNftName(nftName); // Set nft values
+            request.setNftId(nftId); // Set nft values
             request.setNftValue(nftPrice);
 
             //invokes BFT-SMaRt

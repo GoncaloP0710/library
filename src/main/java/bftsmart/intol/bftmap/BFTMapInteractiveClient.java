@@ -18,8 +18,7 @@ public class BFTMapInteractiveClient {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         int clientId = (args.length > 0) ? Integer.parseInt(args[0]) : 1001;
-        BFTProxy coinProxy = new BFTProxy(clientId);
-        BFTProxy nftProxy = new BFTProxy(clientId);
+        BFTProxy proxy = new BFTProxy(clientId);
         Console console = System.console();
         InterfaceHandler.startUp();
         InterfaceHandler.help();
@@ -42,7 +41,7 @@ public class BFTMapInteractiveClient {
                 }
 
                 //invokes the op on the servers
-                int coin_id = coinProxy.Mint_Coin(coin_value);
+                int coin_id = proxy.Mint_Coin(coin_value);
                 
                 if (coin_id == -1) {
                     InterfaceHandler.erro("\tCoin could not be minted!\n");
@@ -53,17 +52,16 @@ public class BFTMapInteractiveClient {
 
             } else if (cmd.equalsIgnoreCase("MY_COINS")) {
 
-                Collection<Coin> coins = coinProxy.My_Coins();
+                Collection<Coin> coins = proxy.My_Coins();
 
                 if (coins.isEmpty()) {
                     InterfaceHandler.info("\tNo coins found!\n");
                     continue mainLoop;
                 }
 
+                System.out.println("Coins:");
                 for (Coin coin : coins) {
-                    if (coin.getOwner() == clientId) {
-                        InterfaceHandler.info(coin.toString());
-                    }
+                    InterfaceHandler.info(coin.toString());
                 }
 
             } else if (cmd.equalsIgnoreCase("SPEND")) {
@@ -78,7 +76,7 @@ public class BFTMapInteractiveClient {
                     String coin_ids = console.readLine("Enter the IDs of the coins to transfer (comma-separated): ");
                     coins_id_to_transfer = Utils.coinIdToArray(coin_ids.split(","));
 
-                    int response = coinProxy.Spend_Coin(transfer_value, reciver_id, coins_id_to_transfer);
+                    int response = proxy.Spend_Coin(transfer_value, reciver_id, coins_id_to_transfer);
 
                     if (response == -1) {
                         InterfaceHandler.erro("\tThe coins could not be spent!\n");
@@ -92,7 +90,7 @@ public class BFTMapInteractiveClient {
 
             } else if (cmd.equalsIgnoreCase("MY_NFTS")) {
 
-                Collection<Nft> nfts = nftProxy.My_Nfts();
+                Collection<Nft> nfts = proxy.My_Nfts();
 
                 if (nfts.isEmpty()) {
                     InterfaceHandler.info("\tNo NFTs found!\n");
@@ -119,7 +117,7 @@ public class BFTMapInteractiveClient {
                     continue mainLoop;
                 }
 
-                int nft_id = nftProxy.Mint_Nft(nft_name, nft_uri, nft_value);
+                int nft_id = proxy.Mint_Nft(nft_name, nft_uri, nft_value);
 
                 if (nft_id == -1) {
                     InterfaceHandler.erro("\tNFT could not be minted!\n");
@@ -130,25 +128,25 @@ public class BFTMapInteractiveClient {
 
             } else if (cmd.equalsIgnoreCase("SET_NFT_PRICE")) {
 
-                String nft_name;
+                int nft_id;
                 float new_price;
 
                 try {
-                    nft_name = console.readLine("Enter the name of the NFT: ");
+                    nft_id = Integer.parseInt(console.readLine("Enter the id of the NFT: "));
                     new_price = Float.parseFloat(console.readLine("Enter the new price of the NFT: "));
                 } catch (NumberFormatException e) {
                     InterfaceHandler.erro("\tThe values were of an incorrect type!\n");
                     continue mainLoop;
                 }
 
-                int response = nftProxy.Set_Nft_Price(nft_name, new_price);
+                int response = proxy.Set_Nft_Price(nft_id, new_price);
 
                 if (response == -1) {
                     InterfaceHandler.erro("\tThe price could not be set!\n");
                     continue mainLoop;
                 }
 
-                InterfaceHandler.success("Price of NFT " + nft_name + " set to " + new_price + "\n");
+                InterfaceHandler.success("Price of NFT " + nft_id + " set to " + new_price + "\n");
 
             } else if (cmd.equalsIgnoreCase("SEARCH_NFT")) {
 
@@ -161,7 +159,7 @@ public class BFTMapInteractiveClient {
                     continue mainLoop;
                 }
                 
-                Collection<Nft> nfts = nftProxy.Search_Nft(nft_name);
+                Collection<Nft> nfts = proxy.Search_Nft(nft_name);
 
                 for (Nft nft : nfts) {
                     InterfaceHandler.info(nft.toString());
@@ -177,7 +175,7 @@ public class BFTMapInteractiveClient {
                     String coin_ids = console.readLine("Enter the IDs of the coins to transfer (comma-separated): ");
                     coins_id_to_transfer = Utils.coinIdToArray(coin_ids.split(","));
 
-                    int response = nftProxy.Buy_Nft(nft_id, coins_id_to_transfer);
+                    int response = proxy.Buy_Nft(nft_id, coins_id_to_transfer);
 
                     if (response == -1) {
                         InterfaceHandler.erro("\tThe NFT could not be bought!\n");

@@ -23,11 +23,14 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
     private final Logger logger = LoggerFactory.getLogger("bftsmart");
     private TreeMap<K, V> replicaMapCoin;
     private TreeMap<K, V> replicaMapNft;
+    private int counter;
 
     //The constructor passes the id of the server to the super class
     public BFTMapServer(int id) {
         replicaMapCoin = new TreeMap<>();
         replicaMapNft = new TreeMap<>();
+
+        counter = 0;
 
         //turn-on BFT-SMaRt'replica
         new ServiceReplica(id, this, this);
@@ -45,6 +48,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
     public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
         //all operations must be defined here to be invoked by BFT-SMaRt
         try {
+            counter ++;
             BFTMapMessage response = new BFTMapMessage();
             BFTMapMessage request = BFTMapMessage.fromBytes(command);
             BFTMapRequestType cmd = request.getType();
@@ -55,11 +59,24 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                 // -----------------------------------------> Coins
                 case MY_COINS:
                     System.out.println("MY_COINS request from " + msgCtx.getSender()); 
+                    for (V coin : replicaMapCoin.values()) {
+                        if (coin instanceof Coin) {
+                            Coin c = (Coin) coin;
+                            System.out.println("Coin id: " + c.getId());
+                            System.out.println("Coin owner: " + c.getOwner());
+                            System.out.println("Coin value: " + c.getValue());
+                            System.out.println("=====================================");
+                        }
+                    }
                     Collection<Coin> coins = new ArrayList<>();
                     for (V coin : replicaMapCoin.values()) {
                         if (coin instanceof Coin && ((Coin) coin).getOwner() == msgCtx.getSender())
                             coins.add((Coin) coin);
                     }
+                    if (coins.isEmpty()) {
+                        System.out.println("No coins found");
+                    }
+
                     response.setCoins(coins);
                     return BFTMapMessage.toBytes(response);
 
@@ -68,7 +85,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     if (msgCtx.getSender() == 4) {
                         float value = request.getCoinValue();
                         if (value > 0) {
-                            Coin new_coin = new Coin(value, msgCtx.getSender());
+                            Coin new_coin = new Coin(value, msgCtx.getSender(), counter);
                             replicaMapCoin.put((K) Integer.valueOf(new_coin.getId()), (V) new_coin);
                             response.setCoinId(new_coin.getId());
                         } else {
@@ -77,6 +94,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                     } else {
                         response.setCoinId(-1);
                     }
+                    System.out.println(response.getCoinId());
                     return BFTMapMessage.toBytes(response);
 
                 case SPEND:
@@ -100,13 +118,31 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                         }
 
                         // Create new coin for the receiver
-                        Coin new_coin = new Coin(request.getCoinValue(), Integer.parseInt(request.getReciverId()));
+                        Coin new_coin = new Coin(request.getCoinValue(), Integer.parseInt(request.getReciverId()), counter);
                         replicaMapCoin.put((K) Integer.valueOf(new_coin.getId()), (V) new_coin);
+                        counter++;
+                        System.out.println("New coin id: " + new_coin.getId());
+                        System.out.println("New coin owner: " + new_coin.getOwner());
                     
+                        System.out.println("Change: " + coins_change);
                         if (coins_change > 0) { // Create new coin for the sender with the change
-                            Coin change = new Coin(coins_change, msgCtx.getSender());
+                            Coin change = new Coin(coins_change, msgCtx.getSender(), counter);
                             replicaMapCoin.put((K) Integer.valueOf(change.getId()), (V) change);
+                            counter++;
+                            System.out.println("Change coin id: " + change.getId());
+                            System.out.println("Change coin owner: " + change.getOwner());
                         }
+
+                        for (V coin : replicaMapCoin.values()) {
+                            if (coin instanceof Coin) {
+                                Coin c = (Coin) coin;
+                                System.out.println("Coin id: " + c.getId());
+                                System.out.println("Coin owner: " + c.getOwner());
+                                System.out.println("Coin value: " + c.getValue());
+                                System.out.println("=====================================");
+                            }
+                        }
+
                         response.setCoinId(new_coin.getId());
                         return BFTMapMessage.toBytes(response);
                     }
@@ -136,7 +172,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                             }
                         }
 
-                        Nft new_nft = new Nft(name, uri, value, msgCtx.getSender());
+                        Nft new_nft = new Nft(name, uri, value, msgCtx.getSender(), counter);
                         replicaMapNft.put((K) Integer.valueOf(new_nft.getId()), (V) new_nft);
                         response.setNftId(new_nft.getId());
                     } else {
@@ -188,7 +224,7 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                         }
                     }
 
-                    float coins_change2 = Utils.coins_change(coins_to_buy, request.getCoinValue());
+                    float coins_change2 = Utils.coins_change(coins_to_buy, nft_to_buy.getValue());
                     if (coins_change2 < 0) {
                         response.setCoinId(-1);
                         return BFTMapMessage.toBytes(response);
@@ -198,12 +234,14 @@ public class BFTMapServer<K, V> extends DefaultSingleRecoverable {
                         }
 
                         // Create new coin for the receiver
-                        Coin new_coin = new Coin(request.getCoinValue(), Integer.parseInt(request.getReciverId()));
+                        Coin new_coin = new Coin(nft_to_buy.getValue(), nft_to_buy.getOwner(), counter);
                         replicaMapCoin.put((K) Integer.valueOf(new_coin.getId()), (V) new_coin);
-                    
+                        counter++;
+
                         if (coins_change2 > 0) { // Create new coin for the sender with the change
-                            Coin change = new Coin(coins_change2, msgCtx.getSender());
+                            Coin change = new Coin(coins_change2, msgCtx.getSender(), counter);
                             replicaMapCoin.put((K) Integer.valueOf(change.getId()), (V) change);
+                            counter++;
                         }
 
                         nft_to_buy.setOwner(msgCtx.getSender());

@@ -10,8 +10,8 @@ public class Coin implements Serializable {
     private int owner;
     private float value;
 
-    public Coin(float value, int owner) {
-        this.id = Utils.generateId(owner);
+    public Coin(float value, int owner, int counter) {
+        this.id = counter;
         this.owner = owner;
         this.value = value;
     }

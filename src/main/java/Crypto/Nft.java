@@ -12,8 +12,8 @@ public class Nft implements Serializable{
     private String uri;
     private float value;
 
-    public Nft(String name, String uri, float value, int owner) {
-        this.id = Utils.generateId(owner);
+    public Nft(String name, String uri, float value, int owner, int counter) {
+        this.id = counter;
         this.owner = owner;
         this.name = name;
         this.uri = uri;

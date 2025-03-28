@@ -1,8 +1,8 @@
 package Utils;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
 
 import Crypto.Coin;
 import Crypto.Nft;
@@ -10,11 +10,13 @@ import Crypto.Nft;
 public final class Utils {
     private Utils() {}
 
-    public static int generateId(int owner) {
-        Random random = new Random();
-        int salt = owner * 31;
-        return random.nextInt(100000) + salt;
-    }
+    // public static int generateId(int owner) {
+    //     return 2;
+    // }
+
+    // public static int generateIdNft(String name) {
+    //      return Objects.hash(name);
+    // }
 
     public static ArrayList<Integer> coinIdToArray(String[] coin_id_array) {
         ArrayList<Integer> coins_to_transfer = new ArrayList<>();
