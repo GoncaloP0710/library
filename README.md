@@ -79,20 +79,20 @@ To **enable read-only operations**, open the file build/install/library/config/s
 To start the server, run the following command:
 Linux:
 ```sh
-cd build/install/library && ./smartrun.sh bftsmart.intol.bftmap.BFTMapServer <server id>
+cd build/install/library && ./smartrun.sh bftsmart.intol.bftTokens.BFTTokenServer <server id>
 ```
 Windows cmd:
 ```sh
-cd build/install/library && smartrun.cmd bftsmart.intol.bftmap.BFTMapServer <server id>
+cd build/install/library && smartrun.cmd bftsmart.intol.bftTokens.BFTTokenServer <server id>
 ```
 
 ### Running the Client
 To start the client, run the following command:
 Linux:
 ```sh
-cd build/install/library && ./smartrun.sh bftsmart.intol.bftmap.BFTMapInteractiveClient <client id>
+cd build/install/library && ./smartrun.sh bftsmart.intol.bftToken.BFTTokenInteractiveClient <client id>
 ```
 Windows cmd:
 ```sh
-cd build/install/library && smartrun.cmd bftsmart.intol.bftmap.BFTMapInteractiveClient <client id>
+cd build/install/library && smartrun.cmd bftsmart.intol.bftTokens.BFTTokenInteractiveClient <client id>
 ```
