@@ -2,7 +2,7 @@
  * BFT Map implementation (interactive client).
  *
  */
-package bftsmart.intol.bftmap;
+package bftsmart.intol.bftTokens;
 
 import Crypto.Coin;
 import Crypto.Nft;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class BFTMapInteractiveClient {
+public class BFTTokenInteractiveClient {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         int clientId = (args.length > 0) ? Integer.parseInt(args[0]) : 1001;
@@ -87,6 +87,8 @@ public class BFTMapInteractiveClient {
                     InterfaceHandler.erro("\tThe format of the value or the ID is wrong!\n");
                     continue mainLoop;
                 }
+
+                InterfaceHandler.success("Coins transferred to " + reciver_id + "\n");
 
             } else if (cmd.equalsIgnoreCase("MY_NFTS")) {
 
@@ -186,6 +188,8 @@ public class BFTMapInteractiveClient {
                     InterfaceHandler.erro("\tThe format of the value or receiver ID is wrong!\n");
                     continue mainLoop;
                 }
+
+                InterfaceHandler.success("NFT " + nft_id + " bought\n");
             } else {
                 InterfaceHandler.erro("\tInvalid command :P\n");
             }

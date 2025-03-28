@@ -3,9 +3,9 @@
  * 
  */
 
-package bftsmart.intol.bftmap;
+package bftsmart.intol.bftTokens;
 
-public enum BFTMapRequestType {
+public enum BFTTokenRequestType {
 
     // ----------------------------> Coins
     MY_COINS,
