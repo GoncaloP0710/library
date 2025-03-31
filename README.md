@@ -1,10 +1,12 @@
 # BFT-SMaRt Decentralized Token Infrastructure
 
+
 ## Authors
 
 - André Reis - fc58192
 - Daniel Nunes - fc58257
 - Gonçalo Pinto - fc58178
+Group 18
 
 Faculdade: https://ciencias.ulisboa.pt/
 
@@ -90,7 +92,7 @@ cd build/install/library && smartrun.cmd bftsmart.intol.bftTokens.BFTTokenServer
 To start the client, run the following command:
 Linux:
 ```sh
-cd build/install/library && ./smartrun.sh bftsmart.intol.bftToken.BFTTokenInteractiveClient <client id>
+cd build/install/library && ./smartrun.sh bftsmart.intol.bftTokens.BFTTokenInteractiveClient <client id>
 ```
 Windows cmd:
 ```sh
